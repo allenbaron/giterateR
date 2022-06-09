@@ -1,0 +1,21 @@
+Package: giterateR
+Type: Package
+Title: Code Execution Iterater across Git Refs
+Version: 0.1.0
+Author: J. Allen Baron
+Maintainer: J. Allen Baron <jabaron.phd@gmail.com>
+Description: Iteratively execute code across specified Git refs
+    (commits, tags, branches). Built on gert.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/allenbaron/giterateR
+BugReports: https://github.com/allenbaron/giterateR/issues
+Suggests: 
+    covr,
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Language: en-US
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
