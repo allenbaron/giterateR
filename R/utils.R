@@ -32,3 +32,9 @@ inform_head <- function(repo = ".") {
 is_string <- function(x) {
   is.character(x) && length(x) == 1
 }
+
+
+anchor_head <- function(repo, envir = parent.frame()) {
+  .head <- git2r::repository_head(repo)
+  withr::defer(git2r::checkout(.head), envir = envir)
+}
