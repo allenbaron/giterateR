@@ -1,15 +1,23 @@
-disclose_repo <- function(x) {
-  if (class(x) %in% paste0("git_", c("commit", "branch", "tag"))) {
+
+# Informational -----------------------------------------------------------
+
+disclose_git_path <- function(x) {
+  if (is_git2r_ref(x)) {
     path <- x$repo$path
-  } else if (class(x) == "git_repository") {
+  } else if (is_git2r_repo(x)) {
     path <- x$path
   } else if (is_string(x)) {
-    path <- git2r::repository(x)
+    path <- git2r::repository(x)$path
   } else {
     stop("`x` must be a git2r object or a path string.")
   }
+  path
+}
 
-  sub(".*/([^/]+)/.git", "\\1", path)
+
+disclose_repo <- function(x) {
+  git_path <- disclose_git_path(x)
+  sub(".*/([^/]+)/.git", "\\1", git_path)
 }
 
 
@@ -29,10 +37,22 @@ inform_head <- function(repo = ".") {
 }
 
 
+# Type Predicates ---------------------------------------------------------
+
 is_string <- function(x) {
   is.character(x) && length(x) == 1
 }
 
+is_git2r_ref <- function(x) {
+  class(x) %in% paste0("git_", c("commit", "branch", "tag"))
+}
+
+is_git2r_repo <- function(x) {
+  class(x) == "git_repository"
+}
+
+
+# State Restoration -------------------------------------------------------
 
 anchor_head <- function(repo, envir = parent.frame()) {
   .head <- git2r::repository_head(repo)
