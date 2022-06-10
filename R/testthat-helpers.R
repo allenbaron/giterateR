@@ -1,23 +1,20 @@
-local_test_repo <- function(setup_df, repo_name = "giterateR_test",
-                             envir = parent.frame()) {
+create_test_repo <- function(setup_df, repo_name) {
   validate_setup_df(setup_df)
-  path <- file.path(tempdir(check = TRUE), repo_name)
-  withr::defer(unlink(path, recursive = TRUE), envir = envir)
+  dir.create(repo_name)
 
-  dir.create(path)
-  repo <- git2r::init(path)
+  repo <- git2r::init(repo_name)
   git2r::config(repo, user.name = "giterateR", user.email = "fake@example.org")
 
   commit_info <- lapply(
     1:nrow(setup_df),
-    advance_test_repo, path = path, setup_df = setup_df
+    create_test_repo_ref, path = repo_name, setup_df = setup_df
   )
 
-  path
+  repo_name
 }
 
 
-advance_test_repo <- function(path, setup_df, row) {
+create_test_repo_ref <- function(path, setup_df, row) {
   df1 <- setup_df[row, ]
   current_branch <- git2r::repository_head(path)$name
   branches <- names(git2r::branches(path))
