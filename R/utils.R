@@ -70,6 +70,9 @@ is_git2r_repo <- function(x) {
   class(x) == "git_repository"
 }
 
+is_boolean <- function(x) {
+  is.logical(x) && length(x) == 1
+}
 
 # State Restoration -------------------------------------------------------
 
