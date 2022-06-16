@@ -9,7 +9,7 @@ withr::with_tempdir({ # wrap all to ensure removal of test repository
   )
 
   repo_name <- "giterateR_test"
-  path_string <- create_test_repo(df, repo_name = repo_name)
+  path_string <- create_test_repo(df, repo_name = repo_name, return_path = TRUE)
   repo <- git2r::repository(path_string)
   commit_list <- git2r::commits(path_string)
   branch_list <- git2r::branches(path_string)

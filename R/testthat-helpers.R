@@ -1,16 +1,40 @@
-create_test_repo <- function(setup_df, repo_name) {
+create_test_repo <- function(setup_df, repo_name, tmpdir = FALSE,
+                             return_path = FALSE) {
   validate_setup_df(setup_df)
-  dir.create(repo_name)
+  stopifnot(is_boolean(tmpdir))
+  stopifnot(is_boolean(return_path))
 
-  repo <- git2r::init(repo_name)
+  if (tmpdir) {
+    tmpdir <- tempdir(check = TRUE)
+    repo_path <- file.path(tmpdir, repo_name)
+  } else {
+    repo_path <- repo_name
+  }
+
+  if (!dir.exists(repo_path)) {
+    dir.create(repo_path)
+  }
+
+  repo <- git2r::init(repo_path)
+  if (is.null(repo)) {
+    stop(paste0(repo_path, " could not be initiated."))
+  }
+  if (!git2r::is_empty(repo)) {
+    warning(
+      paste0(repo_name, " is an existing, non-empty repo. Nothing was added."),
+      call. = FALSE
+    )
+    if (return_path) return(repo_path) else return(repo)
+  }
+
   git2r::config(repo, user.name = "giterateR", user.email = "fake@example.org")
 
   commit_info <- lapply(
     1:nrow(setup_df),
-    create_test_repo_ref, path = repo_name, setup_df = setup_df
+    create_test_repo_ref, path = repo_path, setup_df = setup_df
   )
 
-  repo_name
+  if (return_path) repo_path else repo
 }
 
 
