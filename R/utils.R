@@ -21,16 +21,35 @@ disclose_repo <- function(x) {
 }
 
 
+disclose_ref <- function(x) {
+  UseMethod("disclose_ref")
+}
+
+#' @export
+disclose_ref.git_commit <- function(x) {
+  paste(sub("git_", "", class(x)), x$sha, sep = ":")
+}
+
+#' @export
+disclose_ref.git_tag <- function(x) {
+  paste("commit", x$target, sep = ":")
+}
+
+#' @export
+disclose_ref.git_branch <- function(x) {
+  paste(sub("git_", "", class(x)), x$name, sep = ":")
+}
+
+
 inform_head <- function(repo = ".") {
   if (!is_string(repo) && !class(repo) == "git_repository") {
     stop("`repo` must be a git2r git_repository or a path string.")
   }
   head_info <- git2r::repository_head(repo)
   repo_name <- disclose_repo(head_info)
-  head_type <- sub("git_", "", class(head_info))
-  head_id <- if ("name" %in% names(head_info)) head_info$name else head_info$sha
+  obj_id <- disclose_ref(head_info)
 
-  msg <- paste0(repo_name, "@", head_type, ":", head_id)
+  msg <- paste0(repo_name, "@", obj_id)
   message(msg)
 
   invisible(repo)
