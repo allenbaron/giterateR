@@ -3,3 +3,4 @@
 S3method(disclose_ref,git_branch)
 S3method(disclose_ref,git_commit)
 S3method(disclose_ref,git_tag)
+export(git_exec)
