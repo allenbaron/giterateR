@@ -20,6 +20,10 @@ disclose_repo <- function(x) {
   sub(".*/([^/]+)/.git", "\\1", git_path)
 }
 
+disclose_repo_path <- function(x) {
+  git_path <- disclose_git_path(x)
+  dirname(git_path)
+}
 
 disclose_ref <- function(x) {
   UseMethod("disclose_ref")
