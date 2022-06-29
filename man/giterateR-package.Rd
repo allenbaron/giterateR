@@ -6,8 +6,8 @@
 \alias{giterateR-package}
 \title{giterateR: Code Execution Iterater across Git Refs}
 \description{
-Iteratively execute code across specified Git refs
-    (commits, tags, branches). Built on gert.
+Iteratively execute code across specified Git refs (commits,
+    tags, branches). Built on git2r.
 }
 \seealso{
 Useful links:

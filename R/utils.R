@@ -78,9 +78,28 @@ is_boolean <- function(x) {
   is.logical(x) && length(x) == 1
 }
 
+
 # State Restoration -------------------------------------------------------
 
 anchor_head <- function(repo, envir = parent.frame()) {
   .head <- git2r::repository_head(repo)
   withr::defer(git2r::checkout(.head), envir = envir)
+}
+
+
+# Wrappers ----------------------------------------------------------------
+
+git_checkout_simple <- function(ref, repo = NULL) {
+  if (!is_git2r_ref(ref) || !is_string(ref)) {
+    stop("`ref` is not a single, supported git2r object or string identifier.")
+  }
+  if (is_string(ref) && is.null(repo)) {
+    stop("`repo` must be specified for string inputs to `ref`.")
+  }
+
+  if (is_git2r_ref(ref)) {
+    git2r::checkout(ref)
+  } else {
+    git2r::checkout(repo, ref)
+  }
 }

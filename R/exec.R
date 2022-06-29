@@ -22,7 +22,9 @@
 #'
 #' @export
 git_exec <- function(ref, fn, ..., repo = NULL, restore_head = TRUE) {
-  if (restore_head) anchor_head(repo)
+  if (restore_head) {
+    anchor_head(repo)
+  }
   if (!is_git2r_ref(ref) && length(ref) > 1) {
     stop("`ref` should be a single git ref. Did you mean to use `git_iterate()`?")
   }

@@ -1,6 +1,6 @@
 withr::with_tempdir({ # wrap all to ensure removal of test repository
 
-# Set up test repository --------------------------------------------------
+  # Set up test repository ------------------------------------------------
   df <- data.frame(
     branch = c("main", "dev"),
     commit = c(1, 2),
@@ -16,7 +16,7 @@ withr::with_tempdir({ # wrap all to ensure removal of test repository
   tag_list <- git2r::tags(path_string)
 
 
-# Execute tests -----------------------------------------------------------
+  # Execute tests -----------------------------------------------------------
   test_that("disclose_git_path() works with path string and git2r objects", {
     expected <- normalizePath(
       file.path(path_string, ".git"),
@@ -91,6 +91,38 @@ withr::with_tempdir({ # wrap all to ensure removal of test repository
     expect_checkout_restore(repo, branch_list[[1]], expected)
     expect_checkout_restore(path_string, tag_list[[1]], expected)
     expect_checkout_restore(repo, commit_list[[1]], expected)
+  })
+
+  # git_simple_checkout() test functions
+  checkout_head <- function(...) git2r::repository_head(git2r::checkout(...))
+  checkout_simple_head <- function(...) {
+    git2r::repository_head(git2r::git_checkout_simple(...))
+  }
+
+  # git_simple_checkout() expected results
+  res_dev <- checkout_head(repo, "dev")
+  res_tag <- checkout_head(repo, tags[[1]])
+  res_commit <- checkout_head(repo, commits[[2]])
+
+  test_that("git_checkout_simple() accepts git2r objects", {
+    expect_identical(checkout_simple_head(ref = branches["dev"]), res_dev)
+    expect_identical(checkout_simple_head(ref = tags[[1]]), res_tag)
+    expect_identical(checkout_simple_head(ref = commits[[2]]), res_commit)
+  })
+
+  test_that("git_checkout_simple() accepts git2r objects", {
+    expect_identical(
+      checkout_simple_head(ref = "dev", repo = path_string),
+      res_dev
+    )
+    expect_identical(
+      checkout_simple_head(ref = tags[[1]]$name, repo = path_string),
+      res_tag
+    )
+    expect_identical(
+      checkout_simple_head(ref = commits[[2]]$sha, repo = path_string),
+      res_commit
+    )
   })
 
 })
